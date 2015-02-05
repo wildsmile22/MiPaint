@@ -3,7 +3,9 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 /*
@@ -22,13 +24,15 @@ public class VentanaPaint extends javax.swing.JFrame {
      */
     //creamos una variable de tipo linea para guardar la linea que dibuja el usuario.
     Line2D.Double linea = new Line2D.Double();
+    Ellipse2D.Double circulo = new Ellipse2D.Double();
+    Rectangle2D.Double cuadrado = new Rectangle2D.Double();
 
     //en una variable de tipo BufferedImage puedo almacenar una imagen.
     private BufferedImage buffer = null;
     
     //almacena el color seleccionado
     Color colorSeleccionado = Color.black;
-
+     int Grosor = 3;
     public VentanaPaint() {
 
         initComponents();
@@ -124,7 +128,6 @@ public class VentanaPaint extends javax.swing.JFrame {
         );
 
         jDialog2.setMinimumSize(new java.awt.Dimension(600, 213));
-        jDialog2.setPreferredSize(new java.awt.Dimension(600, 213));
 
         jSlider1.setMajorTickSpacing(10);
         jSlider1.setMinorTickSpacing(2);
@@ -246,10 +249,15 @@ public class VentanaPaint extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 260, 70, 64));
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 240, 70, 64));
 
-        jButton2.setText("Circle");
-        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 73, 64));
+        jButton2.setIcon(new javax.swing.ImageIcon("/Users/luisfeliz/Desktop/PaintEvolution/src/imagenes/iconos/BarraHerramientas/circulo_16px.png")); // NOI18N
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 60, 64));
 
         jButton3.setText("New");
         jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -257,17 +265,22 @@ public class VentanaPaint extends javax.swing.JFrame {
                 jButton3MousePressed(evt);
             }
         });
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 20, 74, 34));
 
-        jButton4.setText("Square");
+        jButton4.setIcon(new javax.swing.ImageIcon("/Users/luisfeliz/Desktop/PaintEvolution/src/imagenes/iconos/BarraHerramientas/rectangulo.png")); // NOI18N
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 170, -1, 64));
+        getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 160, 60, 64));
 
-        jButton7.setText("Type");
+        jButton7.setText("Grosor");
         jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jButton7MousePressed(evt);
@@ -278,7 +291,7 @@ public class VentanaPaint extends javax.swing.JFrame {
                 jButton7ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 350, 90, 40));
+        getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 330, 90, 40));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -306,8 +319,9 @@ public class VentanaPaint extends javax.swing.JFrame {
         //pinto la linea en el jPanel
          //*para hacer linea discontinua
         float dash[] = {10.0f};
-        g2.setStroke(new BasicStroke(3.0f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,10.0f, dash,0.0f));
+        g2.setStroke(new BasicStroke(jSlider1.getValue(),BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,10.0f, dash,0.0f));
         //*
+        g2.draw(linea);
         g2.setColor(colorSeleccionado);
         g2.draw(linea);
     }//GEN-LAST:event_jPanel1MouseDragged
@@ -323,7 +337,7 @@ public class VentanaPaint extends javax.swing.JFrame {
         //pinto la linea en el jPanel
         //*para hacer linea discontinua
         float dash[] = {10.0f};
-        g2.setStroke(new BasicStroke(3.0f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,10.0f, dash,0.0f));
+        g2.setStroke(new BasicStroke(jSlider1.getValue(),BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,10.0f, dash,0.0f));
         //*
         g2.setColor(colorSeleccionado);
         g2.draw(linea);
@@ -364,6 +378,7 @@ public class VentanaPaint extends javax.swing.JFrame {
 
     private void jButton7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton7MousePressed
       jDialog2.setVisible(true);
+      jSlider1.setValue(Grosor);
     }//GEN-LAST:event_jButton7MousePressed
 
     private void jButton8MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton8MousePressed
@@ -390,6 +405,14 @@ public class VentanaPaint extends javax.swing.JFrame {
     private void jButton10MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton10MousePressed
        jDialog2.setVisible(false);
     }//GEN-LAST:event_jButton10MousePressed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+       
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
