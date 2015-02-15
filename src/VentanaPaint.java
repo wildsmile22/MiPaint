@@ -22,7 +22,7 @@ import static java.lang.Math.sqrt;
  */
 /**
  *
- * @author Dani
+ * @author Luis Feliz
  */
 public class VentanaPaint extends javax.swing.JFrame {
 
@@ -75,13 +75,20 @@ public class VentanaPaint extends javax.swing.JFrame {
 
         
         //enlazo el buffer al jPanel 
-        buffer = (BufferedImage) jPanel1.createImage(anchoPanel, altoPanel);
+       
 
-        Graphics2D g2 = buffer.createGraphics();
-        g2.setColor(Color.white);
-        g2.fillRect(0, 0, anchoPanel, altoPanel);
+       
+        
+        buffer = (BufferedImage) jPanel1.createImage(anchoPanel, altoPanel);
+        
+        Graphics2D g3 = buffer.createGraphics();
+        
+        
+        g3.setColor(Color.white);
+        g3.fillRect(0, 0, anchoPanel, altoPanel);
+        
+        g2 = (Graphics2D) jPanel1.getGraphics();
         g4 = (Graphics2D) buffer.getGraphics();
-        Graphics2D g4 = (Graphics2D) jPanel1.getGraphics();
     }
 
     @Override
@@ -91,7 +98,7 @@ public class VentanaPaint extends javax.swing.JFrame {
 
         //a continuación apunto al jPanel
         Graphics2D g2 = (Graphics2D) jPanel1.getGraphics();
-        Graphics2D g3 = (Graphics2D) jButton2.getGraphics();
+        Graphics2D g4 = (Graphics2D) jButton2.getGraphics();
 
         //pinto el buffer sobre el jPanel
         g2.drawImage(buffer, 0, 0, null);
@@ -200,6 +207,12 @@ public class VentanaPaint extends javax.swing.JFrame {
         jButton9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton9ActionPerformed(evt);
+            }
+        });
+
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
             }
         });
 
@@ -367,6 +380,11 @@ public class VentanaPaint extends javax.swing.JFrame {
                 jButton12MousePressed(evt);
             }
         });
+        jButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton12ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton12, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 410, 70, 50));
 
         pack();
@@ -379,14 +397,14 @@ public class VentanaPaint extends javax.swing.JFrame {
         linea.x2 =evt.getX();
         linea.y1 =evt.getY();
         linea.y2 =evt.getY();
-        Graphics2D g2 = (Graphics2D)jPanel1.getGraphics();
-        g2.draw(linea);
+        Graphics2D g3 = (Graphics2D)jPanel1.getGraphics();
+        g3.draw(linea);
         
          xOrigen = evt.getX();
                 yOrigen = evt.getY();
                 cuadrado.x = xOrigen;
                 cuadrado.y = yOrigen;
-                g2.draw(cuadrado);
+                g3.draw(cuadrado);
                 
                  circulo.x = evt.getX();
                 circulo.y = evt.getY();
@@ -461,7 +479,7 @@ public class VentanaPaint extends javax.swing.JFrame {
         linea.x2 =evt.getX();
         linea.y2 =evt.getY();
         //pinto la linea en el jPanel
-        //*para hacer linea discontinua
+        //para hacer linea discontinua
         String stringLinea = (Tipos.getSelectedItem().toString());
         if (stringLinea.equals("Liso")){
          g2.setStroke(new BasicStroke(jSlider1.getValue()));
@@ -596,6 +614,14 @@ public class VentanaPaint extends javax.swing.JFrame {
     private void jButton12MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton12MousePressed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton12MousePressed
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton12ActionPerformed
 
     /**
      * @param args the command line arguments
