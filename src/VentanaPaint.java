@@ -1,12 +1,19 @@
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Toolkit;
+
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -22,30 +29,59 @@ public class VentanaPaint extends javax.swing.JFrame {
     /**
      * Creates new form VentanaPaint
      */
-    //creamos una variable de tipo linea para guardar la linea que dibuja el usuario.
-    Line2D.Double linea = new Line2D.Double();
-    Ellipse2D.Double circulo = new Ellipse2D.Double();
-    Rectangle2D.Double cuadrado = new Rectangle2D.Double();
+    //formas que podemos hacer
+    private Line2D.Double linea = new Line2D.Double();
+    private Ellipse2D.Double circulo = new Ellipse2D.Double();
+    private Rectangle2D.Double cuadrado = new Rectangle2D.Double();
 
     //en una variable de tipo BufferedImage puedo almacenar una imagen.
-    private BufferedImage buffer = null;
+    private BufferedImage buffer;
+    
+     private int x1;
+    private int x2;
+    private int y1;
+    private int y2;
+    private int alto;
+    private int ancho;
+    private double xOrigen;
+    private double yOrigen;
     
     //almacena el color seleccionado
     Color colorSeleccionado = Color.black;
+      int seleccionCursor = 0;
+    int opcionForma = 0;
+    String estados = "";
+    int numeroLinea = 0;
+    private Graphics2D g4;
+    private Graphics2D g2;
+    
      int Grosor = 3;
+ 
+//     @override
     public VentanaPaint() {
-
+        // iniciamos el buffer
+        buffer = null;
+        
+       //primero decimos que pinte        
+        //empezamos a iniciar las formas 
+        
+         linea = new Line2D.Double();
+        circulo = new Ellipse2D.Double();
+        cuadrado = new Rectangle2D.Double();
         initComponents();
         jDialog1.setSize(550,500);
         int anchoPanel = jPanel1.getWidth();
         int altoPanel = jPanel1.getHeight();
 
+        
         //enlazo el buffer al jPanel 
         buffer = (BufferedImage) jPanel1.createImage(anchoPanel, altoPanel);
 
         Graphics2D g2 = buffer.createGraphics();
         g2.setColor(Color.white);
         g2.fillRect(0, 0, anchoPanel, altoPanel);
+        g4 = (Graphics2D) buffer.getGraphics();
+        Graphics2D g4 = (Graphics2D) jPanel1.getGraphics();
     }
 
     @Override
@@ -55,9 +91,12 @@ public class VentanaPaint extends javax.swing.JFrame {
 
         //a continuación apunto al jPanel
         Graphics2D g2 = (Graphics2D) jPanel1.getGraphics();
+        Graphics2D g3 = (Graphics2D) jButton2.getGraphics();
 
         //pinto el buffer sobre el jPanel
         g2.drawImage(buffer, 0, 0, null);
+       // pinto el circulo y cuadrado cuando presiono sus respectivos botones
+        
     }
 
     /**
@@ -85,6 +124,9 @@ public class VentanaPaint extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
+        Tipos = new javax.swing.JComboBox();
+        Goma = new javax.swing.JButton();
+        jButton12 = new javax.swing.JButton();
 
         jDialog1.setResizable(false);
 
@@ -130,9 +172,12 @@ public class VentanaPaint extends javax.swing.JFrame {
         jDialog2.setMinimumSize(new java.awt.Dimension(600, 213));
 
         jSlider1.setMajorTickSpacing(10);
+        jSlider1.setMaximum(50);
         jSlider1.setMinorTickSpacing(2);
         jSlider1.setPaintLabels(true);
         jSlider1.setPaintTicks(true);
+        jSlider1.setSnapToTicks(true);
+        jSlider1.setValue(5);
 
         jButton8.setText("ok");
         jButton8.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -233,7 +278,7 @@ public class VentanaPaint extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 648, Short.MAX_VALUE)
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(97, 13, -1, 652));
@@ -249,15 +294,20 @@ public class VentanaPaint extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 240, 70, 64));
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 60, 64));
 
         jButton2.setIcon(new javax.swing.ImageIcon("/Users/luisfeliz/Desktop/PaintEvolution/src/imagenes/iconos/BarraHerramientas/circulo_16px.png")); // NOI18N
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jButton2MousePressed(evt);
+            }
+        });
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 60, 64));
+        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, 40, 50));
 
         jButton3.setText("New");
         jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -273,12 +323,17 @@ public class VentanaPaint extends javax.swing.JFrame {
         getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 20, 74, 34));
 
         jButton4.setIcon(new javax.swing.ImageIcon("/Users/luisfeliz/Desktop/PaintEvolution/src/imagenes/iconos/BarraHerramientas/rectangulo.png")); // NOI18N
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jButton4MousePressed(evt);
+            }
+        });
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 160, 60, 64));
+        getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 90, 40, 50));
 
         jButton7.setText("Grosor");
         jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -291,7 +346,28 @@ public class VentanaPaint extends javax.swing.JFrame {
                 jButton7ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 330, 90, 40));
+        getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 350, 90, 40));
+
+        Tipos.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Lisa", "Punteada", "Rayada", "Mixta" }));
+        getContentPane().add(Tipos, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 310, 100, -1));
+
+        Goma.setIcon(new javax.swing.ImageIcon(getClass().getResource("/eraser.png"))); // NOI18N
+        Goma.setText("Goma");
+        Goma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GomaActionPerformed(evt);
+            }
+        });
+        getContentPane().add(Goma, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 50, 50));
+
+        jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/save.png.png"))); // NOI18N
+        jButton12.setText("Guardar");
+        jButton12.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jButton12MousePressed(evt);
+            }
+        });
+        getContentPane().add(jButton12, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 410, 70, 50));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -305,10 +381,25 @@ public class VentanaPaint extends javax.swing.JFrame {
         linea.y2 =evt.getY();
         Graphics2D g2 = (Graphics2D)jPanel1.getGraphics();
         g2.draw(linea);
+        
+         xOrigen = evt.getX();
+                yOrigen = evt.getY();
+                cuadrado.x = xOrigen;
+                cuadrado.y = yOrigen;
+                g2.draw(cuadrado);
+                
+                 circulo.x = evt.getX();
+                circulo.y = evt.getY();
+                // Centro del circulo
+                xOrigen = circulo.x;
+                yOrigen = circulo.y;
+                g4.draw(circulo);
     }//GEN-LAST:event_jPanel1MousePressed
 
     private void jPanel1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseDragged
-       //apunta al jPanel1
+      
+//apunta al jPanel1
+        
         Graphics2D g2 = (Graphics2D)jPanel1.getGraphics();
         //borro el jPanel con lo que hay en el buffer
         g2.drawImage(buffer,0,0,null);
@@ -317,38 +408,105 @@ public class VentanaPaint extends javax.swing.JFrame {
         linea.x2 =evt.getX();
         linea.y2 =evt.getY();
         //pinto la linea en el jPanel
-         //*para hacer linea discontinua
-        float dash[] = {10.0f};
+        //*para hacer linea rayada, mixta, lisa y punteada
+        String stringLinea = (Tipos.getSelectedItem().toString());
+        if (stringLinea.equals("Liso")){
+         g2.setStroke(new BasicStroke(jSlider1.getValue()));
+        }
+        if(stringLinea.equals("Mixta")){
+            float dash[] = {21.0f,9.0f,3.0f,9.0f};
         g2.setStroke(new BasicStroke(jSlider1.getValue(),BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,10.0f, dash,0.0f));
+        }
+        if(stringLinea.equals("Punteada")){
+            float dash[] = {5.0f,5.0f};
+        g2.setStroke(new BasicStroke(jSlider1.getValue(),BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,10.0f, dash,0.0f));
+        }
+        if(stringLinea.equals("Rayada")){
+            float dash[] = {21.0f,9.0f};
+        g2.setStroke(new BasicStroke(jSlider1.getValue(),BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,10.0f, dash,0.0f));
+        }
         //*
         g2.draw(linea);
         g2.setColor(colorSeleccionado);
         g2.draw(linea);
+        
+         double radio,
+                 d1,
+                 d2;
+                d1 = evt.getX() - xOrigen;
+                if (d1 < 0) {
+                    d1 = xOrigen - evt.getX();
+                }
+                d2 = evt.getY() - yOrigen;
+                if (d2 < 0) {
+                    d2 = yOrigen - evt.getY();
+                }
+                radio = pow(d1, 2) + pow(d2, 2); // modulo vector
+                if (radio < 0) {
+                    radio = radio * -1;
+                }
+                radio = sqrt(radio);
+                circulo.x = xOrigen - radio;
+                circulo.y = yOrigen - radio;
+                circulo.height = radio * 2;
+                circulo.width = circulo.height;
+                g4.draw(circulo);
+                
     }//GEN-LAST:event_jPanel1MouseDragged
 
     private void jPanel1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseReleased
          //apunta al jPanel1
         Graphics2D g2 = (Graphics2D)buffer.getGraphics();
-       
-        
-        
+     
         linea.x2 =evt.getX();
         linea.y2 =evt.getY();
         //pinto la linea en el jPanel
         //*para hacer linea discontinua
-        float dash[] = {10.0f};
+        String stringLinea = (Tipos.getSelectedItem().toString());
+        if (stringLinea.equals("Liso")){
+         g2.setStroke(new BasicStroke(jSlider1.getValue()));
+        }
+        if(stringLinea.equals("Mixta")){
+            float dash[] = {21.0f,9.0f,3.0f,9.0f};
         g2.setStroke(new BasicStroke(jSlider1.getValue(),BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,10.0f, dash,0.0f));
-        //*
+        }
+        if(stringLinea.equals("Punteada")){
+            float dash[] = {5.0f,5.0f};
+        g2.setStroke(new BasicStroke(jSlider1.getValue(),BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,10.0f, dash,0.0f));
+        }
+        if(stringLinea.equals("Rayada")){
+            float dash[] = {21.0f,9.0f};
+        g2.setStroke(new BasicStroke(jSlider1.getValue(),BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,10.0f, dash,0.0f));
+        }
         g2.setColor(colorSeleccionado);
         g2.draw(linea);
         //vuelvo a apuntar al jPanel
         g2 = (Graphics2D)jPanel1.getGraphics();
+       
         //borro el jPanel con lo que hay en el buffer
         g2.drawImage(buffer,0,0,null);
+        
+        circulo.x =evt.getX();
+        circulo.y =evt.getY();
+        g4.setStroke(new BasicStroke(jSlider1.getValue()));
+        g4.setColor(colorSeleccionado);
+        g4.draw(circulo);
+        
+         xOrigen = evt.getX();
+                yOrigen = evt.getY();
+                cuadrado.x = xOrigen;
+                cuadrado.y = yOrigen;
+                g2.draw(cuadrado);
+       
     }//GEN-LAST:event_jPanel1MouseReleased
 
     private void jButton3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MousePressed
-       
+       int ancho = jPanel1.getWidth();
+        int alto = jPanel1.getHeight();
+        
+        Graphics2D g3 = buffer.createGraphics();
+        g3.setColor(Color.white);
+        g3.fillRect(0, 0, ancho, alto);
     }//GEN-LAST:event_jButton3MousePressed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -378,7 +536,7 @@ public class VentanaPaint extends javax.swing.JFrame {
 
     private void jButton7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton7MousePressed
       jDialog2.setVisible(true);
-      jSlider1.setValue(Grosor);
+     
     }//GEN-LAST:event_jButton7MousePressed
 
     private void jButton8MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton8MousePressed
@@ -404,6 +562,7 @@ public class VentanaPaint extends javax.swing.JFrame {
 
     private void jButton10MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton10MousePressed
        jDialog2.setVisible(false);
+       
     }//GEN-LAST:event_jButton10MousePressed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -413,6 +572,30 @@ public class VentanaPaint extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
        
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MousePressed
+        // TODO add your handling code here:
+        circulo.x = evt.getX();
+        circulo.x = evt.getX();
+        circulo.y = evt.getY();
+        circulo.y = evt.getY();
+               g4.draw(circulo);
+    }//GEN-LAST:event_jButton2MousePressed
+
+    private void jButton4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MousePressed
+        // TODO add your handling code here:
+         // Esquina superior izq cuadrado
+               
+                
+    }//GEN-LAST:event_jButton4MousePressed
+
+    private void GomaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GomaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_GomaActionPerformed
+
+    private void jButton12MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton12MousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton12MousePressed
 
     /**
      * @param args the command line arguments
@@ -450,8 +633,11 @@ public class VentanaPaint extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Goma;
+    private javax.swing.JComboBox Tipos;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
