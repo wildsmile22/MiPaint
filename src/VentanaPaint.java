@@ -12,8 +12,15 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -43,8 +50,8 @@ public class VentanaPaint extends javax.swing.JFrame {
     private int y2;
     private int alto;
     private int ancho;
-    private double xOrigen;
-    private double yOrigen;
+    private double comienzoX;
+    private double comienzoY;
     
     //almacena el color seleccionado
     Color colorSeleccionado = Color.black;
@@ -56,6 +63,7 @@ public class VentanaPaint extends javax.swing.JFrame {
     private Graphics2D g2;
     
      int Grosor = 3;
+    private int relleno;
  
 //     @override
     public VentanaPaint() {
@@ -133,7 +141,9 @@ public class VentanaPaint extends javax.swing.JFrame {
         jButton7 = new javax.swing.JButton();
         Tipos = new javax.swing.JComboBox();
         Goma = new javax.swing.JButton();
-        jButton12 = new javax.swing.JButton();
+        BotonGuardar = new javax.swing.JButton();
+        Linea = new javax.swing.JButton();
+        Pencil = new javax.swing.JButton();
 
         jDialog1.setResizable(false);
 
@@ -287,11 +297,11 @@ public class VentanaPaint extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 774, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 648, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(97, 13, -1, 652));
@@ -307,7 +317,7 @@ public class VentanaPaint extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 60, 64));
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 190, 60, 64));
 
         jButton2.setIcon(new javax.swing.ImageIcon("/Users/luisfeliz/Desktop/PaintEvolution/src/imagenes/iconos/BarraHerramientas/circulo_16px.png")); // NOI18N
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -320,7 +330,7 @@ public class VentanaPaint extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, 40, 50));
+        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 40, 40));
 
         jButton3.setText("New");
         jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -333,7 +343,7 @@ public class VentanaPaint extends javax.swing.JFrame {
                 jButton3ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 20, 74, 34));
+        getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 74, 34));
 
         jButton4.setIcon(new javax.swing.ImageIcon("/Users/luisfeliz/Desktop/PaintEvolution/src/imagenes/iconos/BarraHerramientas/rectangulo.png")); // NOI18N
         jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -346,7 +356,7 @@ public class VentanaPaint extends javax.swing.JFrame {
                 jButton4ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 90, 40, 50));
+        getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, 40, 40));
 
         jButton7.setText("Grosor");
         jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -359,33 +369,58 @@ public class VentanaPaint extends javax.swing.JFrame {
                 jButton7ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 350, 90, 40));
+        getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 90, 40));
 
         Tipos.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Lisa", "Punteada", "Rayada", "Mixta" }));
-        getContentPane().add(Tipos, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 310, 100, -1));
+        getContentPane().add(Tipos, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 260, 100, -1));
 
         Goma.setIcon(new javax.swing.ImageIcon(getClass().getResource("/eraser.png"))); // NOI18N
-        Goma.setText("Goma");
+        Goma.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                GomaMousePressed(evt);
+            }
+        });
         Goma.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 GomaActionPerformed(evt);
             }
         });
-        getContentPane().add(Goma, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 50, 50));
+        getContentPane().add(Goma, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, 70, 50));
 
-        jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/save.png.png"))); // NOI18N
-        jButton12.setText("Guardar");
-        jButton12.addMouseListener(new java.awt.event.MouseAdapter() {
+        BotonGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/save.png.png"))); // NOI18N
+        BotonGuardar.setText("Guardar");
+        BotonGuardar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jButton12MousePressed(evt);
+                BotonGuardarMousePressed(evt);
             }
         });
-        jButton12.addActionListener(new java.awt.event.ActionListener() {
+        BotonGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton12ActionPerformed(evt);
+                BotonGuardarActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton12, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 410, 70, 50));
+        getContentPane().add(BotonGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 330, 70, 50));
+
+        Linea.setIcon(new javax.swing.ImageIcon(getClass().getResource("/line.png"))); // NOI18N
+        Linea.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                LineaMousePressed(evt);
+            }
+        });
+        Linea.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LineaActionPerformed(evt);
+            }
+        });
+        getContentPane().add(Linea, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 70, -1));
+
+        Pencil.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pencil.png"))); // NOI18N
+        Pencil.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                PencilMousePressed(evt);
+            }
+        });
+        getContentPane().add(Pencil, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 70, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -393,25 +428,30 @@ public class VentanaPaint extends javax.swing.JFrame {
     private void jPanel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MousePressed
         //se empieza a dibujar la linea
             //asi que almaceno en z1 y1 el punto donde se a producido el clic
+        if(opcionForma==0){
         linea.x1 =evt.getX();
-        linea.x2 =evt.getX();
         linea.y1 =evt.getY();
-        linea.y2 =evt.getY();
-        Graphics2D g3 = (Graphics2D)jPanel1.getGraphics();
-        g3.draw(linea);
+      }
+         if( opcionForma==1 || opcionForma==4){
+          x1 =evt.getX();
+          y1 =evt.getY();
+      }
         
-         xOrigen = evt.getX();
-                yOrigen = evt.getY();
-                cuadrado.x = xOrigen;
-                cuadrado.y = yOrigen;
-                g3.draw(cuadrado);
-                
-                 circulo.x = evt.getX();
+        if(opcionForma==2){
+      circulo.x = evt.getX();
                 circulo.y = evt.getY();
                 // Centro del circulo
-                xOrigen = circulo.x;
-                yOrigen = circulo.y;
-                g4.draw(circulo);
+                comienzoX = circulo.x;
+                comienzoY = circulo.y;
+       }
+        if(opcionForma==3){
+        comienzoX = evt.getX();
+                comienzoY = evt.getY();
+                cuadrado.x = comienzoX;
+                cuadrado.y = comienzoY;
+        }
+        
+                
     }//GEN-LAST:event_jPanel1MousePressed
 
     private void jPanel1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseDragged
@@ -444,31 +484,68 @@ public class VentanaPaint extends javax.swing.JFrame {
         g2.setStroke(new BasicStroke(jSlider1.getValue(),BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,10.0f, dash,0.0f));
         }
         //*
-        g2.draw(linea);
-        g2.setColor(colorSeleccionado);
-        g2.draw(linea);
         
-         double radio,
+        g2.setColor(colorSeleccionado);
+        if(opcionForma==0){
+        linea.x2 =evt.getX();
+        linea.y2 =evt.getY();
+        g2.draw(linea);
+       
+       }
+       if(opcionForma==1 || opcionForma==4){
+          if (opcionForma==4){
+              g4.setStroke(new BasicStroke(jSlider1.getValue()+20));
+            g4.setColor(Color.WHITE);
+           }else{g4.setColor(colorSeleccionado);
+                g4.setStroke(new BasicStroke(jSlider1.getValue()));}
+                x2 = evt.getX();
+                y2 = evt.getY();
+                if (x1 != x2 || y1 != y2) {
+                    g4.drawLine(x1, y1, x2, y2);
+                    y1 = y2;
+                    x1 = x2;
+                }
+       }
+       if(opcionForma==2){
+       double radio,
                  d1,
                  d2;
-                d1 = evt.getX() - xOrigen;
+                d1 = evt.getX() - comienzoX;
                 if (d1 < 0) {
-                    d1 = xOrigen - evt.getX();
+                    d1 = comienzoX - evt.getX();
                 }
-                d2 = evt.getY() - yOrigen;
+                d2 = evt.getY() - comienzoY;
                 if (d2 < 0) {
-                    d2 = yOrigen - evt.getY();
+                    d2 = comienzoY - evt.getY();
                 }
                 radio = pow(d1, 2) + pow(d2, 2); // modulo vector
                 if (radio < 0) {
                     radio = radio * -1;
                 }
                 radio = sqrt(radio);
-                circulo.x = xOrigen - radio;
-                circulo.y = yOrigen - radio;
+                circulo.x = comienzoX - radio;
+                circulo.y = comienzoY - radio;
                 circulo.height = radio * 2;
                 circulo.width = circulo.height;
-                g4.draw(circulo);
+                g2.draw(circulo);
+       }
+        
+       if(opcionForma==3){
+        if (evt.getX() > comienzoX) {
+            cuadrado.width = evt.getX() - cuadrado.x;
+        } else {
+            cuadrado.x = evt.getX();
+            cuadrado.width = comienzoX - cuadrado.x;
+        }
+        if (evt.getY() > comienzoY) {
+            cuadrado.height = evt.getY() - comienzoY;
+        } else {
+            cuadrado.y = evt.getY();
+            cuadrado.height = comienzoY - cuadrado.y;
+        }
+        g2.draw(cuadrado);
+        }
+        
                 
     }//GEN-LAST:event_jPanel1MouseDragged
 
@@ -496,25 +573,42 @@ public class VentanaPaint extends javax.swing.JFrame {
             float dash[] = {21.0f,9.0f};
         g2.setStroke(new BasicStroke(jSlider1.getValue(),BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,10.0f, dash,0.0f));
         }
-        g2.setColor(colorSeleccionado);
-        g2.draw(linea);
-        //vuelvo a apuntar al jPanel
-        g2 = (Graphics2D)jPanel1.getGraphics();
-       
+         //*
+        
+        
+        
+        
+        if(opcionForma==0){
+       g4.draw(linea);
+        
+        }
+        if(opcionForma==1 || opcionForma==4){
+           if (opcionForma==4){
+            g4.setColor(Color.WHITE);
+           }else{g4.setColor(colorSeleccionado);} 
+         g4.drawLine(evt.getX(), evt.getY(), evt.getX(), evt.getY());
+         
+        }
+        
+         if(opcionForma==2){
+       g4.draw(circulo);
+       if(relleno==1){
+          g4.fill(circulo);
+         }
+       }
+         if(opcionForma==3){
+         g4.draw(cuadrado);
+         if(relleno==1){
+          g4.fill(cuadrado);
+         }
+        }
+          //vuelvo a apuntar al jPanel
+        
         //borro el jPanel con lo que hay en el buffer
-        g2.drawImage(buffer,0,0,null);
-        
-        circulo.x =evt.getX();
-        circulo.y =evt.getY();
-        g4.setStroke(new BasicStroke(jSlider1.getValue()));
-        g4.setColor(colorSeleccionado);
-        g4.draw(circulo);
-        
-         xOrigen = evt.getX();
-                yOrigen = evt.getY();
-                cuadrado.x = xOrigen;
-                cuadrado.y = yOrigen;
-                g2.draw(cuadrado);
+       
+       g2 = (Graphics2D) jPanel1.getGraphics();
+        g2.drawImage(buffer, 0, 0, null);
+       
        
     }//GEN-LAST:event_jPanel1MouseReleased
 
@@ -593,16 +687,14 @@ public class VentanaPaint extends javax.swing.JFrame {
 
     private void jButton2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MousePressed
         // TODO add your handling code here:
-        circulo.x = evt.getX();
-        circulo.x = evt.getX();
-        circulo.y = evt.getY();
-        circulo.y = evt.getY();
-               g4.draw(circulo);
+        seleccionCursor = 0; 
+        opcionForma = 2;
     }//GEN-LAST:event_jButton2MousePressed
 
     private void jButton4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MousePressed
         // TODO add your handling code here:
-         // Esquina superior izq cuadrado
+        seleccionCursor = 0;  
+        opcionForma=3;
                
                 
     }//GEN-LAST:event_jButton4MousePressed
@@ -611,17 +703,56 @@ public class VentanaPaint extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_GomaActionPerformed
 
-    private void jButton12MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton12MousePressed
+    private void BotonGuardarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BotonGuardarMousePressed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton12MousePressed
+        JFileChooser fileChooser = new JFileChooser();
+     
+int seleccion = fileChooser.showSaveDialog(this);
+ fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Images", "jpg", "png", "gif", "bmp"));
+if (seleccion == JFileChooser.APPROVE_OPTION)
+{
+   File fichero = fileChooser.getSelectedFile();
+   try {
+                ImageIO.write(buffer, "png", fileChooser.getSelectedFile());
+               
+            } catch (IOException ex) {
+                Logger.getLogger(VentanaPaint.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("Save as file: ");
+         
+ 
+}
+    }//GEN-LAST:event_BotonGuardarMousePressed
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+    private void BotonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonGuardarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton12ActionPerformed
+    }//GEN-LAST:event_BotonGuardarActionPerformed
+
+    private void GomaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GomaMousePressed
+        // TODO add your handling code here:
+         seleccionCursor = 2; 
+       opcionForma=4;
+    }//GEN-LAST:event_GomaMousePressed
+
+    private void LineaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LineaMousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_LineaMousePressed
+
+    private void PencilMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PencilMousePressed
+        // TODO add your handling code here:
+         seleccionCursor = 1;
+        opcionForma = 1;
+    }//GEN-LAST:event_PencilMousePressed
+
+    private void LineaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LineaActionPerformed
+        // TODO add your handling code here:
+        seleccionCursor = 0; 
+       opcionForma = 0;
+    }//GEN-LAST:event_LineaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -659,11 +790,13 @@ public class VentanaPaint extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BotonGuardar;
     private javax.swing.JButton Goma;
+    private javax.swing.JButton Linea;
+    private javax.swing.JButton Pencil;
     private javax.swing.JComboBox Tipos;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
